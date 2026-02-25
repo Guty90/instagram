@@ -2,6 +2,7 @@ package com.instagram.notification_service.service;
 
 import com.instagram.notification_service.dto.LikeEventDTO;
 import com.instagram.notification_service.dto.NotificationResponseDTO;
+import com.instagram.notification_service.dto.StoryDTO;
 import com.instagram.notification_service.dto.UserDTO;
 import com.instagram.notification_service.model.Notification;
 import com.instagram.notification_service.repository.NotificationRepository;
@@ -21,12 +22,23 @@ public class NotificationService {
     private final NotificationRepository repository;
     private final RestTemplate restTemplate;
 
+    @Value("${story-service.url}")
+    private String storyServiceUrl;
+
     @Value("${user-service.url}")
     private String userServiceUrl;
 
     @Transactional
     public void handleLikeEvent(LikeEventDTO event) {
         if ("LIKED".equals(event.getAction())) {
+
+            // Valida que la historia existe
+            StoryDTO story = restTemplate.getForObject(
+                    storyServiceUrl + "/api/stories/" + event.getStoryId(),
+                    StoryDTO.class
+            );
+
+            if (story == null) return;
 
             // Valida que el usuario existe
             UserDTO user = restTemplate.getForObject(
@@ -39,7 +51,7 @@ public class NotificationService {
             Notification notification = Notification.builder()
                     .storyId(event.getStoryId())
                     .fromUserId(event.getUserId())
-                    .toUserId(event.getStoryId()) // sigue temporal hasta tener story-service
+                    .toUserId(story.getUserId())
                     .type("LIKED")
                     .build();
             repository.save(notification);
