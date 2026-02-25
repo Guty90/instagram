@@ -10,4 +10,6 @@ import java.util.Optional;
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
     List<Notification> findByToUserIdOrderByCreatedAtDesc(Long toUserId);
     Optional<Notification> findByStoryIdAndFromUserIdAndType(Long storyId, Long fromUserId, String type);
+
+    void deleteByStoryIdAndFromUserId(Long storyId, Long fromUserId);
 }
