@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/likes/stories")
 @RequiredArgsConstructor
@@ -30,5 +32,15 @@ public class StoryLikeController {
     @GetMapping("/{storyId}/count")
     public ResponseEntity<Long> count(@PathVariable Long storyId) {
         return ResponseEntity.ok(service.getLikeCount(storyId));
+    }
+
+    @GetMapping("/{storyId}/hasLiked/{userId}")
+    public ResponseEntity<Boolean> hasLiked(@PathVariable Long storyId, @PathVariable Long userId) {
+        return ResponseEntity.ok(service.hasLiked(storyId, userId));
+    }
+
+    @GetMapping("/{storyId}/users")
+    public ResponseEntity<List<Long>> getUsersWhoLiked(@PathVariable Long storyId) {
+        return ResponseEntity.ok(service.getUsersWhoLiked(storyId));
     }
 }

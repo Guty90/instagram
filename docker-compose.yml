@@ -36,16 +36,11 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
-  kafka-ui:
-    image: provectuslabs/kafka-ui:latest
-    container_name: kafka-ui
-    depends_on:
-      - kafka
+  redis:
+    image: redis:7.2
+    container_name: redis
     ports:
-      - "9000:8080"
-    environment:
-      KAFKA_CLUSTERS_0_NAME: local
-      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+      - "6379:6379"
 
 volumes:
   postgres_data:
