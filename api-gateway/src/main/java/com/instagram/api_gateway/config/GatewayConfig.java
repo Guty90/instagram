@@ -55,4 +55,11 @@ public class GatewayConfig {
                 .filter(jwtAuthFilter.apply())
                 .build();
     }
+
+    @Bean
+    public RouterFunction<ServerResponse> notificationWsRoute() {
+        return GatewayRouterFunctions.route("notification-ws")
+                .route(path("/ws/**"), HandlerFunctions.http("http://localhost:8082"))
+                .build();
+    }
 }

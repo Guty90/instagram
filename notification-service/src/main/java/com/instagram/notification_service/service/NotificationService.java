@@ -6,6 +6,7 @@ import com.instagram.notification_service.dto.StoryDTO;
 import com.instagram.notification_service.dto.UserDTO;
 import com.instagram.notification_service.model.Notification;
 import com.instagram.notification_service.repository.NotificationRepository;
+import com.instagram.notification_service.websocket.NotificationWebSocketHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,8 @@ public class NotificationService {
 
     private final NotificationRepository repository;
     private final RestTemplate restTemplate;
+    private final NotificationWebSocketHandler webSocketHandler;
+
 
     @Value("${story-service.url}")
     private String storyServiceUrl;
@@ -31,6 +34,13 @@ public class NotificationService {
     @Transactional
     public void handleLikeEvent(LikeEventDTO event) {
         if ("LIKED".equals(event.getAction())) {
+            // Valida que el usuario existe
+            UserDTO user = restTemplate.getForObject(
+                    userServiceUrl + "/api/users/" + event.getUserId(),
+                    UserDTO.class
+            );
+
+            if (user == null) return;
 
             // Valida que la historia existe
             StoryDTO story = restTemplate.getForObject(
@@ -40,21 +50,21 @@ public class NotificationService {
 
             if (story == null) return;
 
-            // Valida que el usuario existe
-            UserDTO user = restTemplate.getForObject(
-                    userServiceUrl + "/api/users/" + event.getUserId(),
-                    UserDTO.class
-            );
-
-            if (user == null) return;
-
             Notification notification = Notification.builder()
                     .storyId(event.getStoryId())
                     .fromUserId(event.getUserId())
                     .toUserId(story.getUserId())
                     .type("LIKED")
                     .build();
-            repository.save(notification);
+
+            Notification saved = repository.save(notification);
+
+            // Envía por WebSocket
+            String message = String.format(
+                    "{\"type\":\"LIKED\",\"fromUserId\":%d,\"storyId\":%d,\"notificationId\":%d}",
+                    event.getUserId(), event.getStoryId(), saved.getId()
+            );
+            webSocketHandler.sendToUser(story.getUserId().toString(), message);
         }
 
         if ("UNLIKED".equals(event.getAction())) {
@@ -75,4 +85,6 @@ public class NotificationService {
                         .build())
                 .collect(Collectors.toList());
     }
+
+
 }
