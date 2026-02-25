@@ -2,6 +2,7 @@ package com.instagram.story_service.service;
 
 import com.instagram.story_service.dto.StoryRequestDTO;
 import com.instagram.story_service.dto.StoryResponseDTO;
+import com.instagram.story_service.dto.UserDTO;
 import com.instagram.story_service.model.Story;
 import com.instagram.story_service.repository.StoryRepository;
 import lombok.RequiredArgsConstructor;
@@ -66,9 +67,17 @@ public class StoryService {
     }
 
     private StoryResponseDTO toDTO(Story story) {
+        String username = null;
+        try {
+            UserDTO user = restTemplate.getForObject(
+                    userServiceUrl + "/api/users/" + story.getUserId(), UserDTO.class);
+            if (user != null) username = user.getUsername();
+        } catch (Exception ignored) {}
+
         return StoryResponseDTO.builder()
                 .id(story.getId())
                 .userId(story.getUserId())
+                .username(username)
                 .content(story.getContent())
                 .createdAt(story.getCreatedAt())
                 .expiresAt(story.getExpiresAt())

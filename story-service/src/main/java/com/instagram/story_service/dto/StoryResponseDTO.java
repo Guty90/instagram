@@ -14,6 +14,7 @@ public class StoryResponseDTO {
     private Long id;
     private Long userId;
     private String content;
+    private String username;
     private LocalDateTime createdAt;
     private LocalDateTime expiresAt;
     private boolean expired;

@@ -27,7 +27,7 @@ public class UserService {
     }
 
     public UserResponseDTO getUserById(Long id) {
-        User user = repository.findById(id)
+        User user = repository.findByExternalId(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado: " + id));
         return toDTO(user);
     }

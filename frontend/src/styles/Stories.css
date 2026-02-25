@@ -1,0 +1,535 @@
+.stories-bar {
+  display: flex;
+  gap: 16px;
+  padding: 16px 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.stories-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.story-bubble {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.story-bubble__ring {
+  width: 66px;
+  height: 66px;
+  border-radius: var(--radius-full);
+  background: var(--gradient-story);
+  padding: 2.5px;
+  transition: transform var(--transition), opacity var(--transition);
+}
+
+.story-bubble__ring:hover {
+  transform: scale(1.05);
+  opacity: 0.9;
+}
+
+.story-bubble__ring--viewed {
+  background: var(--gradient-story-viewed);
+}
+
+.story-bubble__inner {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-full);
+  background: var(--bg-card);
+  border: 2px solid var(--bg-primary);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.story-bubble__avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.story-bubble__avatar-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-card);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+
+.story-bubble__username {
+  font-size: 11px;
+  color: var(--text-secondary);
+  max-width: 66px;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Story Viewer Modal */
+.story-viewer-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(0, 0, 0, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.story-viewer {
+  position: relative;
+  width: 380px;
+  height: 680px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--bg-card);
+  box-shadow: var(--shadow-lg);
+  animation: slideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes slideUp {
+  from { transform: scale(0.9) translateY(20px); opacity: 0; }
+  to { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+.story-viewer__progress {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  z-index: 10;
+}
+
+.story-viewer__progress-bar {
+  height: 2px;
+  background: rgba(255,255,255,0.3);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.story-viewer__progress-fill {
+  height: 100%;
+  background: #fff;
+  border-radius: var(--radius-full);
+  animation: progressFill 5s linear forwards;
+}
+
+@keyframes progressFill {
+  from { width: 0%; }
+  to { width: 100%; }
+}
+
+.story-viewer__header {
+  position: absolute;
+  top: 24px;
+  left: 12px;
+  right: 12px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.story-viewer__user-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  background: var(--bg-card);
+  border: 2px solid rgba(255,255,255,0.4);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.story-viewer__user-info {
+  flex: 1;
+}
+
+.story-viewer__username {
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+}
+
+.story-viewer__time {
+  font-size: 11px;
+  color: rgba(255,255,255,0.7);
+}
+
+.story-viewer__close {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 22px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  transition: background var(--transition);
+}
+
+.story-viewer__close:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+.story-viewer__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.story-viewer__image-placeholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.story-viewer__content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 20px 16px;
+  background: linear-gradient(to top, rgba(0,0,0,0.85), transparent);
+}
+
+.story-viewer__text {
+  font-size: 15px;
+  color: #fff;
+  line-height: 1.5;
+  margin-bottom: 16px;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+}
+
+.story-viewer__actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.story-viewer__like-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 28px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: transform var(--transition);
+}
+
+.story-viewer__like-btn:hover {
+  transform: scale(1.1);
+}
+
+.story-viewer__like-btn--liked {
+  animation: heartBeat 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes heartBeat {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.3); }
+  100% { transform: scale(1); }
+}
+
+.story-viewer__like-count {
+  font-size: 13px;
+  color: rgba(255,255,255,0.8);
+  font-weight: 500;
+}
+
+/* Prev/Next navigation */
+.story-viewer__nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255,255,255,0.1);
+  border: none;
+  color: #fff;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  backdrop-filter: blur(4px);
+  transition: background var(--transition);
+  z-index: 10;
+}
+
+.story-viewer__nav:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+.story-viewer__nav--prev {
+  left: 8px;
+}
+
+.story-viewer__nav--next {
+  right: 8px;
+}
+
+/* Side stories */
+.story-viewer-side {
+  position: absolute;
+  width: 240px;
+  height: 420px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  opacity: 0.4;
+  transition: all var(--transition);
+  cursor: pointer;
+}
+
+.story-viewer-side:hover {
+  opacity: 0.6;
+}
+
+.story-viewer-side--left {
+  right: calc(100% + 20px);
+  top: 50%;
+  transform: translateY(-50%) scale(0.85);
+}
+
+.story-viewer-side--right {
+  left: calc(100% + 20px);
+  top: 50%;
+  transform: translateY(-50%) scale(0.85);
+}
+
+.story-viewer-side__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.story-viewer-side__placeholder {
+  width: 100%;
+  height: 100%;
+  background: var(--bg-card);
+}
+
+/* Likes Modal */
+.likes-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  animation: fadeIn 0.2s ease;
+}
+
+.likes-modal {
+  width: 100%;
+  max-width: 380px;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  padding: 20px;
+  max-height: 60vh;
+  overflow-y: auto;
+  animation: slideUpModal 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes slideUpModal {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.likes-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.likes-modal__title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.likes-modal__close {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 20px;
+  cursor: pointer;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  transition: background var(--transition);
+}
+
+.likes-modal__close:hover {
+  background: var(--bg-hover);
+}
+
+.likes-modal__empty {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 13px;
+  padding: 20px 0;
+}
+
+.likes-modal__item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-subtle);
+  animation: fadeInUp 0.2s ease both;
+}
+
+.likes-modal__item:last-child {
+  border-bottom: none;
+}
+
+.likes-modal__avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  background: var(--bg-input);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+  border: 1px solid var(--border);
+}
+
+.likes-modal__username {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.likes-modal__heart {
+  margin-left: auto;
+  font-size: 16px;
+}
+
+/* Eye button */
+.story-viewer__eye-btn {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.8);
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: transform var(--transition);
+}
+
+.story-viewer__eye-btn:hover {
+  transform: scale(1.1);
+  color: #fff;
+}
+
+.story-viewer__eye-count {
+  font-size: 13px;
+  color: rgba(255,255,255,0.8);
+  font-weight: 500;
+}
+
+/* Divider entre tu historia y las demás */
+.stories-bar__divider {
+  width: 1px;
+  height: 60px;
+  background: var(--border);
+  align-self: center;
+  flex-shrink: 0;
+  margin: 0 4px;
+}
+
+/* Indicadores de múltiples historias */
+.story-bubble__dots {
+  display: flex;
+  gap: 3px;
+  justify-content: center;
+  margin-top: 2px;
+}
+
+.story-bubble__dot {
+  width: 4px;
+  height: 4px;
+  border-radius: var(--radius-full);
+  background: var(--text-muted);
+  transition: background var(--transition);
+}
+
+.story-bubble__dot--active {
+  background: var(--accent);
+  width: 8px;
+}
+
+/* Ring con múltiples segmentos */
+.story-bubble__ring--multiple {
+  background: conic-gradient(
+    #f09433 0deg,
+    #e6683c 60deg,
+    #dc2743 120deg,
+    #cc2366 180deg,
+    #bc1888 240deg,
+    transparent 240deg,
+    transparent 246deg,
+    #f09433 246deg,
+    #e6683c 306deg,
+    #dc2743 360deg
+  );
+}
+
+.story-bubble__ring--triple {
+  background: conic-gradient(
+    #f09433 0deg,
+    #dc2743 110deg,
+    transparent 110deg,
+    transparent 116deg,
+    #dc2743 116deg,
+    #bc1888 226deg,
+    transparent 226deg,
+    transparent 232deg,
+    #bc1888 232deg,
+    #f09433 360deg
+  );
+}
