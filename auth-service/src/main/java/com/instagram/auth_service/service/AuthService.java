@@ -6,8 +6,12 @@ import com.instagram.auth_service.dto.RegisterRequestDTO;
 import com.instagram.auth_service.model.User;
 import com.instagram.auth_service.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -16,6 +20,10 @@ public class AuthService {
     private final UserRepository repository;
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
+    private final RestTemplate restTemplate;
+
+    @Value("${user-service.url}")
+    private String userServiceUrl;
 
     public AuthResponseDTO register(RegisterRequestDTO request) {
         if (repository.existsByEmail(request.getEmail())) {
@@ -32,6 +40,17 @@ public class AuthService {
                 .build();
 
         User saved = repository.save(user);
+
+        // Crea el perfil en user-service con el externalId
+        restTemplate.postForObject(
+                userServiceUrl + "/api/users",
+                Map.of(
+                        "externalId", saved.getId(),
+                        "username", saved.getUsername(),
+                        "email", saved.getEmail()
+                ),
+                Object.class
+        );
 
         String token = jwtService.generateToken(saved.getId(), saved.getUsername(), saved.getEmail());
 

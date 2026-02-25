@@ -16,6 +16,9 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "external_id", unique = true)
+    private Long externalId; // ← ID del auth-service
+
     @Column(nullable = false, unique = true)
     private String username;
 

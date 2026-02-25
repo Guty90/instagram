@@ -18,12 +18,12 @@ public class UserService {
 
     public UserResponseDTO createUser(UserRequestDTO request) {
         User user = User.builder()
+                .externalId(request.getExternalId())
                 .username(request.getUsername())
                 .email(request.getEmail())
                 .build();
 
-        User saved = repository.save(user);
-        return toDTO(saved);
+        return toDTO(repository.save(user));
     }
 
     public UserResponseDTO getUserById(Long id) {
@@ -42,6 +42,7 @@ public class UserService {
     private UserResponseDTO toDTO(User user) {
         return UserResponseDTO.builder()
                 .id(user.getId())
+                .externalId(user.getExternalId())
                 .username(user.getUsername())
                 .email(user.getEmail())
                 .createdAt(user.getCreatedAt())
