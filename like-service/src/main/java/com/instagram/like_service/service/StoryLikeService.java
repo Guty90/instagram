@@ -9,6 +9,8 @@ import com.instagram.like_service.repository.StoryLikeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.beans.factory.annotation.Value;
 
 @Service
 @RequiredArgsConstructor
@@ -16,14 +18,27 @@ public class StoryLikeService {
 
     private final StoryLikeRepository repository;
     private final LikeEventProducer producer;
+    private final RestTemplate restTemplate;
+
+    @Value("${story-service.url}")
+    private String storyServiceUrl;
 
     @Transactional
     public LikeResponseDTO toggleLike(LikeRequestDTO request) {
 
+        // Valida que la historia existe
+        try {
+            restTemplate.getForObject(
+                    storyServiceUrl + "/api/stories/" + request.getStoryId(),
+                    Object.class
+            );
+        } catch (Exception e) {
+            throw new RuntimeException("Historia no encontrada: " + request.getStoryId());
+        }
+
         if (repository.existsByStoryIdAndUserId(request.getStoryId(), request.getUserId())) {
             repository.deleteByStoryIdAndUserId(request.getStoryId(), request.getUserId());
 
-            // Publicamos el evento de unlike
             LikeResponseDTO unlikeEvent = LikeResponseDTO.builder()
                     .storyId(request.getStoryId())
                     .userId(request.getUserId())
